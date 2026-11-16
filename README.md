@@ -2,7 +2,7 @@
 
 Varshith Reddy — machine-learning homework on regression and classification.
 
-Live site: `https://github.com/VarshithReddy223/ML_ONNX_Deployment`
+Live site: `Live site: https://varshithreddy223.github.io/ML_ONNX_Deployment/`
 
 ## What is here
 
