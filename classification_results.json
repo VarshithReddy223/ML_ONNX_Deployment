@@ -1,0 +1,331 @@
+{
+  "best_model": "F1plusF2",
+  "threshold": 0.48,
+  "features": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "zero_means_missing": [
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI"
+  ],
+  "medians": [
+    0.0,
+    117.0,
+    72.0,
+    29.0,
+    125.0,
+    32.400001525878906,
+    0.0,
+    0.0
+  ],
+  "cv_and_test": [
+    {
+      "model": "F1plusF2",
+      "cv_F1@0.5_mean": 0.6739592588161134,
+      "cv_F1@0.5_std": 0.01589777776108782,
+      "cv_AUC_mean": 0.8455800110741972,
+      "threshold": 0.48,
+      "cv_F1@threshold": 0.6939655172413793,
+      "params": 110,
+      "test_F1@0.5": 0.6495726495726496,
+      "test_F1": 0.6611570247933884,
+      "test_precision": 0.5970149253731343,
+      "test_recall": 0.7407407407407407,
+      "test_specificity": 0.73,
+      "test_accuracy": 0.7337662337662337,
+      "test_ROC_AUC": 0.8127777777777778
+    },
+    {
+      "model": "LogisticReg",
+      "cv_F1@0.5_mean": 0.6723854281128022,
+      "cv_F1@0.5_std": 0.014890752525870273,
+      "cv_AUC_mean": 0.8453294573643412,
+      "threshold": 0.59,
+      "cv_F1@threshold": 0.684596577017115,
+      "params": 9,
+      "test_F1@0.5": 0.6495726495726496,
+      "test_F1": 0.5925925925925926,
+      "test_precision": 0.5925925925925926,
+      "test_recall": 0.5925925925925926,
+      "test_specificity": 0.78,
+      "test_accuracy": 0.7142857142857143,
+      "test_ROC_AUC": 0.8124074074074074
+    },
+    {
+      "model": "ShallowTanh",
+      "cv_F1@0.5_mean": 0.6716563389041447,
+      "cv_F1@0.5_std": 0.020238303829326613,
+      "cv_AUC_mean": 0.8437666112956812,
+      "threshold": 0.42,
+      "cv_F1@threshold": 0.682261208576998,
+      "params": 321,
+      "test_F1@0.5": 0.6721311475409836,
+      "test_F1": 0.6865671641791045,
+      "test_precision": 0.575,
+      "test_recall": 0.8518518518518519,
+      "test_specificity": 0.66,
+      "test_accuracy": 0.7272727272727273,
+      "test_ROC_AUC": 0.8248148148148148
+    },
+    {
+      "model": "ResidualNet",
+      "cv_F1@0.5_mean": 0.6426646465923664,
+      "cv_F1@0.5_std": 0.037044356792856795,
+      "cv_AUC_mean": 0.7949543189368771,
+      "threshold": 0.36,
+      "cv_F1@threshold": 0.6750524109014675,
+      "params": 5377,
+      "test_F1@0.5": 0.7008547008547008,
+      "test_F1": 0.7049180327868853,
+      "test_precision": 0.6323529411764706,
+      "test_recall": 0.7962962962962963,
+      "test_specificity": 0.75,
+      "test_accuracy": 0.7662337662337663,
+      "test_ROC_AUC": 0.8168518518518517
+    },
+    {
+      "model": "DeepBN",
+      "cv_F1@0.5_mean": 0.5922000366818985,
+      "cv_F1@0.5_std": 0.06505046370158174,
+      "cv_AUC_mean": 0.7659939091915836,
+      "threshold": 0.2,
+      "cv_F1@threshold": 0.6379647749510763,
+      "params": 7105,
+      "test_F1@0.5": 0.6017699115044248,
+      "test_F1": 0.6466165413533834,
+      "test_precision": 0.5443037974683544,
+      "test_recall": 0.7962962962962963,
+      "test_specificity": 0.64,
+      "test_accuracy": 0.6948051948051948,
+      "test_ROC_AUC": 0.7807407407407407
+    }
+  ],
+  "cv_folds": [
+    {
+      "model": "LogisticReg",
+      "fold": 1,
+      "F1": 0.6896551724137931,
+      "ROC_AUC": 0.8659883720930233
+    },
+    {
+      "model": "LogisticReg",
+      "fold": 2,
+      "F1": 0.6736842105263158,
+      "ROC_AUC": 0.8398255813953489
+    },
+    {
+      "model": "LogisticReg",
+      "fold": 3,
+      "F1": 0.6506024096385542,
+      "ROC_AUC": 0.8520348837209302
+    },
+    {
+      "model": "LogisticReg",
+      "fold": 4,
+      "F1": 0.6813186813186813,
+      "ROC_AUC": 0.8479651162790698
+    },
+    {
+      "model": "LogisticReg",
+      "fold": 5,
+      "F1": 0.6666666666666666,
+      "ROC_AUC": 0.8208333333333333
+    },
+    {
+      "model": "ShallowTanh",
+      "fold": 1,
+      "F1": 0.6888888888888889,
+      "ROC_AUC": 0.8581395348837209
+    },
+    {
+      "model": "ShallowTanh",
+      "fold": 2,
+      "F1": 0.6534653465346535,
+      "ROC_AUC": 0.8372093023255813
+    },
+    {
+      "model": "ShallowTanh",
+      "fold": 3,
+      "F1": 0.6966292134831461,
+      "ROC_AUC": 0.8729651162790698
+    },
+    {
+      "model": "ShallowTanh",
+      "fold": 4,
+      "F1": 0.6666666666666666,
+      "ROC_AUC": 0.8281976744186047
+    },
+    {
+      "model": "ShallowTanh",
+      "fold": 5,
+      "F1": 0.6526315789473685,
+      "ROC_AUC": 0.8223214285714286
+    },
+    {
+      "model": "F1plusF2",
+      "fold": 1,
+      "F1": 0.6966292134831461,
+      "ROC_AUC": 0.8671511627906977
+    },
+    {
+      "model": "F1plusF2",
+      "fold": 2,
+      "F1": 0.6736842105263158,
+      "ROC_AUC": 0.8415697674418604
+    },
+    {
+      "model": "F1plusF2",
+      "fold": 3,
+      "F1": 0.6588235294117647,
+      "ROC_AUC": 0.85
+    },
+    {
+      "model": "F1plusF2",
+      "fold": 4,
+      "F1": 0.6593406593406593,
+      "ROC_AUC": 0.8444767441860465
+    },
+    {
+      "model": "F1plusF2",
+      "fold": 5,
+      "F1": 0.6813186813186813,
+      "ROC_AUC": 0.824702380952381
+    },
+    {
+      "model": "ResidualNet",
+      "fold": 1,
+      "F1": 0.6746987951807228,
+      "ROC_AUC": 0.833139534883721
+    },
+    {
+      "model": "ResidualNet",
+      "fold": 2,
+      "F1": 0.6875,
+      "ROC_AUC": 0.8226744186046511
+    },
+    {
+      "model": "ResidualNet",
+      "fold": 3,
+      "F1": 0.6304347826086957,
+      "ROC_AUC": 0.8325581395348837
+    },
+    {
+      "model": "ResidualNet",
+      "fold": 4,
+      "F1": 0.6,
+      "ROC_AUC": 0.7337209302325581
+    },
+    {
+      "model": "ResidualNet",
+      "fold": 5,
+      "F1": 0.6206896551724138,
+      "ROC_AUC": 0.7526785714285714
+    },
+    {
+      "model": "DeepBN",
+      "fold": 1,
+      "F1": 0.5263157894736842,
+      "ROC_AUC": 0.7645348837209303
+    },
+    {
+      "model": "DeepBN",
+      "fold": 2,
+      "F1": 0.6236559139784946,
+      "ROC_AUC": 0.7779069767441861
+    },
+    {
+      "model": "DeepBN",
+      "fold": 3,
+      "F1": 0.6896551724137931,
+      "ROC_AUC": 0.8476744186046512
+    },
+    {
+      "model": "DeepBN",
+      "fold": 4,
+      "F1": 0.5531914893617021,
+      "ROC_AUC": 0.7011627906976744
+    },
+    {
+      "model": "DeepBN",
+      "fold": 5,
+      "F1": 0.5681818181818182,
+      "ROC_AUC": 0.7386904761904762
+    }
+  ],
+  "confusion_matrix": [
+    [
+      73,
+      27
+    ],
+    [
+      14,
+      40
+    ]
+  ],
+  "logreg_weights": {
+    "Insulin": -0.046936068683862686,
+    "BloodPressure": -0.012772424146533012,
+    "SkinThickness": 0.014784484170377254,
+    "Age": 0.18871860206127167,
+    "DiabetesPedigreeFunction": 0.28954243659973145,
+    "Pregnancies": 0.37566471099853516,
+    "BMI": 0.712378978729248,
+    "Glucose": 1.1931111812591553
+  },
+  "n_train": 614,
+  "n_test": 154,
+  "samples": [
+    {
+      "inputs": {
+        "Pregnancies": 7.0,
+        "Glucose": 114.0,
+        "BloodPressure": 64.0,
+        "SkinThickness": 0.0,
+        "Insulin": 0.0,
+        "BMI": 27.4,
+        "DiabetesPedigreeFunction": 0.732,
+        "Age": 34.0
+      },
+      "actual": 1,
+      "onnx_prob": 0.3952011466026306
+    },
+    {
+      "inputs": {
+        "Pregnancies": 7.0,
+        "Glucose": 159.0,
+        "BloodPressure": 64.0,
+        "SkinThickness": 0.0,
+        "Insulin": 0.0,
+        "BMI": 27.4,
+        "DiabetesPedigreeFunction": 0.294,
+        "Age": 40.0
+      },
+      "actual": 0,
+      "onnx_prob": 0.7330938577651978
+    },
+    {
+      "inputs": {
+        "Pregnancies": 8.0,
+        "Glucose": 105.0,
+        "BloodPressure": 100.0,
+        "SkinThickness": 36.0,
+        "Insulin": 0.0,
+        "BMI": 43.3,
+        "DiabetesPedigreeFunction": 0.239,
+        "Age": 45.0
+      },
+      "actual": 1,
+      "onnx_prob": 0.6648063063621521
+    }
+  ]
+}

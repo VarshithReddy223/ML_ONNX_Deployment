@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Insurance charges and diabetes risk — PyTorch models in the browser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+  <script src="index.js"></script>
+  <style>
+    :root {
+      --bg: #EDF2EE; --card: #FFFFFF; --ink: #1D2925; --soft: #55645E; --rule: #CBD6CF;
+      --well: #F5F8F6; --green: #1F6F5C; --indigo: #34508F; --red: #B3382C; --focus: #34508F;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #121816; --card: #1A2320; --ink: #E3ECE7; --soft: #9DB0A7; --rule: #2E3B36;
+        --well: #141C19; --green: #5CC2A3; --indigo: #93A8E3; --red: #F08A7E; --focus: #93A8E3; color-scheme: dark;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #121816; --card: #1A2320; --ink: #E3ECE7; --soft: #9DB0A7; --rule: #2E3B36;
+      --well: #141C19; --green: #5CC2A3; --indigo: #93A8E3; --red: #F08A7E; --focus: #93A8E3; color-scheme: dark;
+    }
+    :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+    *, *::before, *::after { box-sizing: inherit; }
+    html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+    body { margin: 0; background: var(--bg); color: var(--ink);
+           font-family: "Atkinson Hyperlegible", Verdana, "Segoe UI", sans-serif; font-size: 17px; line-height: 1.55; }
+    .page { max-width: 1120px; margin: 0 auto; padding: 36px 22px 60px; }
+
+    .masthead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 32px;
+                border-bottom: 3px solid var(--ink); padding-bottom: 18px; margin-bottom: 22px; }
+    h1 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); line-height: 1.12; margin: 0; max-width: 22ch; }
+    .masthead p { margin: 0; color: var(--soft); max-width: 46ch; }
+    #status { font-size: 0.92rem; color: var(--soft); margin: 0 0 18px; }
+    #status.bad { color: var(--red); font-weight: 700; }
+
+    [role="tablist"] { display: flex; gap: 6px; margin-bottom: -1px; }
+    [role="tab"] { font: inherit; font-weight: 700; padding: 10px 18px; cursor: pointer; color: var(--soft);
+                   background: transparent; border: 1px solid transparent; border-bottom: none; border-radius: 6px 6px 0 0; }
+    [role="tab"][aria-selected="true"] { background: var(--card); color: var(--ink); border-color: var(--rule); }
+    [role="tabpanel"] { background: var(--card); border: 1px solid var(--rule); border-radius: 0 6px 6px 6px; padding: 26px; }
+    [role="tabpanel"][hidden] { display: none; }
+
+    .layout { display: grid; grid-template-columns: 1fr; gap: 28px; }
+    @media (min-width: 900px) { .layout { grid-template-columns: 3fr 2fr; align-items: start; } .result { position: sticky; top: 20px; } }
+    .intro { margin: 0 0 18px; color: var(--soft); max-width: 60ch; }
+    .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px 18px; }
+    .field { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 0.95rem; }
+    .field small { font-weight: 400; color: var(--soft); font-size: 0.82rem; }
+    input, select { font: inherit; font-weight: 400; color: var(--ink); background: var(--well); border: 1px solid var(--rule);
+                    border-radius: 4px; padding: 9px 11px; width: 100%; }
+    input[aria-invalid="true"] { border-color: var(--red); }
+    .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+    .seg label { padding: 8px 14px; cursor: pointer; font-weight: 400; background: var(--well); }
+    .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .seg input:checked + span { font-weight: 700; }
+    .seg label:has(input:checked) { background: var(--ink); color: var(--card); }
+    .seg label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: -3px; }
+
+    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; }
+    button { font: inherit; font-weight: 700; cursor: pointer; border-radius: 4px; padding: 10px 20px;
+             background: var(--green); color: #fff; border: 1px solid var(--green); }
+    #panel-insurance button.go { background: var(--indigo); border-color: var(--indigo); }
+    button.chip { background: transparent; color: var(--ink); border: 1px solid var(--rule); font-weight: 400; padding: 6px 12px; font-size: 0.9rem; }
+    button:disabled { opacity: 0.55; cursor: progress; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .hint { color: var(--soft); font-size: 0.9rem; }
+
+    .result { background: var(--well); border-left: 4px solid var(--rule); padding: 20px 22px; min-height: 220px; }
+    .result.on.ins { border-left-color: var(--indigo); }
+    .result.on.low { border-left-color: var(--green); }
+    .result.on.high { border-left-color: var(--red); }
+    .result .label { color: var(--soft); margin: 0; }
+    .amount { font-size: clamp(2.5rem, 6vw, 3.6rem); font-weight: 700; line-height: 1.05; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+    .ins .amount { color: var(--indigo); }
+    .low .amount { color: var(--green); } .high .amount { color: var(--red); }
+    .compare { margin: 0 0 12px; }
+    .meter { position: relative; height: 12px; background: var(--card); border: 1px solid var(--rule); border-radius: 6px; margin: 30px 0 4px; }
+    .meter i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: currentColor; transition: width .3s ease; }
+    .meter b { position: absolute; top: -9px; bottom: -9px; width: 2px; background: var(--ink); }
+    .meter em { position: absolute; top: -28px; transform: translateX(-50%); font-style: normal; font-size: 0.78rem; white-space: nowrap; }
+    .ends { display: flex; justify-content: space-between; color: var(--soft); font-size: 0.8rem; }
+    .small { font-size: 0.88rem; color: var(--soft); margin: 10px 0 0; }
+    .check { font-size: 0.88rem; margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed var(--rule); }
+    .facts { font-size: 0.86rem; color: var(--soft); margin: 18px 0 0; }
+
+    footer { margin-top: 30px; color: var(--soft); font-size: 0.95rem; max-width: 70ch; }
+    footer p { margin: 0 0 8px; }
+    a { color: var(--indigo); }
+    @media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <h1>Insurance charges and diabetes risk</h1>
+      <p>Two PyTorch models running in your browser through ONNX Runtime Web. Your inputs never leave this page.</p>
+    </header>
+    <p id="status" role="status">Loading models…</p>
+
+    <div role="tablist" aria-label="Choose a model">
+      <button role="tab" id="tab-insurance" aria-controls="panel-insurance" aria-selected="true">Insurance charges</button>
+      <button role="tab" id="tab-diabetes" aria-controls="panel-diabetes" aria-selected="false" tabindex="-1">Diabetes risk</button>
+    </div>
+
+    <!-- Regression -->
+    <section role="tabpanel" id="panel-insurance" aria-labelledby="tab-insurance">
+      <div class="layout">
+        <form id="form-insurance" novalidate>
+          <p class="intro">Estimate yearly medical insurance charges for one person (US data).</p>
+          <div class="fields">
+            <label class="field">Age<input type="number" id="i-age" min="18" max="64" step="1" value="40"><small>Trained on ages 18–64</small></label>
+            <label class="field">BMI<input type="number" id="i-bmi" min="15" max="55" step="0.1" value="29.5"><small>Body-mass index, kg/m²</small></label>
+            <label class="field">Children covered<input type="number" id="i-children" min="0" max="5" step="1" value="1"></label>
+            <label class="field">Region
+              <select id="i-region">
+                <option value="northeast">Northeast</option><option value="northwest">Northwest</option>
+                <option value="southeast" selected>Southeast</option><option value="southwest">Southwest</option>
+              </select>
+            </label>
+            <div class="field">Sex
+              <div class="seg" role="radiogroup" aria-label="Sex">
+                <label><input type="radio" name="i-sex" value="female" checked><span>Female</span></label>
+                <label><input type="radio" name="i-sex" value="male"><span>Male</span></label>
+              </div>
+            </div>
+            <div class="field">Smoker
+              <div class="seg" role="radiogroup" aria-label="Smoker">
+                <label><input type="radio" name="i-smoker" value="no" checked><span>No</span></label>
+                <label><input type="radio" name="i-smoker" value="yes"><span>Yes</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <button type="submit" class="go" id="run-insurance">Estimate charges</button>
+            <span class="hint">or load a test-set person:</span><span id="samples-insurance"></span>
+          </div>
+        </form>
+        <div class="result" id="out-insurance" aria-live="polite">
+          <p class="label">Estimated yearly charges</p>
+          <p class="small">Fill in the form and choose “Estimate charges”.</p>
+        </div>
+      </div>
+      <p class="facts" id="facts-insurance"></p>
+    </section>
+
+    <!-- Classification -->
+    <section role="tabpanel" id="panel-diabetes" aria-labelledby="tab-diabetes" hidden>
+      <div class="layout">
+        <form id="form-diabetes" novalidate>
+          <p class="intro">Estimate the probability of diabetes for one patient. Enter 0 for a reading that was not taken; the model fills it in.</p>
+          <div class="fields">
+            <label class="field">Pregnancies<input type="number" id="d-Pregnancies" min="0" step="1" value="2"></label>
+            <label class="field">Glucose<input type="number" id="d-Glucose" min="0" step="1" value="140"><small>Plasma glucose, 2-hour test (mg/dL)</small></label>
+            <label class="field">Blood pressure<input type="number" id="d-BloodPressure" min="0" step="1" value="72"><small>Diastolic (mm Hg)</small></label>
+            <label class="field">Skin thickness<input type="number" id="d-SkinThickness" min="0" step="1" value="30"><small>Triceps skinfold (mm)</small></label>
+            <label class="field">Insulin<input type="number" id="d-Insulin" min="0" step="1" value="0"><small>2-hour serum insulin (μU/mL)</small></label>
+            <label class="field">BMI<input type="number" id="d-BMI" min="0" step="0.1" value="33.0"></label>
+            <label class="field">Diabetes pedigree<input type="number" id="d-DiabetesPedigreeFunction" min="0" step="0.001" value="0.45"><small>Family-history score</small></label>
+            <label class="field">Age<input type="number" id="d-Age" min="21" step="1" value="45"></label>
+          </div>
+          <div class="row">
+            <button type="submit" class="go" id="run-diabetes">Estimate risk</button>
+            <span class="hint">or load a test-set patient:</span><span id="samples-diabetes"></span>
+          </div>
+        </form>
+        <div class="result" id="out-diabetes" aria-live="polite">
+          <p class="label">Probability of diabetes</p>
+          <p class="small">Fill in the form and choose “Estimate risk”.</p>
+        </div>
+      </div>
+      <p class="facts" id="facts-diabetes"></p>
+    </section>
+
+    <footer>
+      <p>Homework by Varshith Reddy: regression and classification with PyTorch, exported to ONNX. Preprocessing (scaling, the log back-transform and the filling of missing readings) is part of each ONNX file, so this page only passes your raw numbers to the model.</p>
+      <p>Code and results: <a id="link-a" href="PartA_Regression_InsuranceCharges.ipynb">regression notebook</a> and <a id="link-b" href="PartB_Classification_Diabetes.ipynb">classification notebook</a>. Not medical or financial advice.</p>
+    </footer>
+  </div>
+</body>
+</html>
